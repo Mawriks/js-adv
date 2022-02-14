@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lesson-4</title>
+    <style>
+        label{display:block;font-size: 12px;margin-bottom: 5px;}
+        .input-container{margin-bottom: 15px;}
+        input{height:30px;font-size: 16px;}
+        textarea{font-family: sans-serif;font-size: 16px;}
+    </style>
+</head>
+<body>
+    <form>
+        <div class="input-container">
+            <label for="name">Имя</label>
+            <input id="name" name="name" type="text" placeholder="Ваше имя">
+        </div>
+        <div class="input-container">
+            <label for="tel">Телефон</label>
+            <input id="tel" name="tel" type="tel" placeholder="Ваш телефон">
+        </div>
+        <div class="input-container">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="Ваш email">
+        </div>
+        <div class="input-container">
+            <label for="text">Сообщение</label>
+            <textarea name="text" id="text" cols="26" rows="5" placeholder="Ваше сообщение"></textarea>
+        </div>
+        <button>Отправить</button>
+    </form>
+<script>
+
+const text = `One: 'Hi Mary.' Two: 'Oh, hi.'
+One: 'How are you doing?'
+Two: 'I'm doing alright. How about you?'
+    One: 'Not too bad. The weather is great isn't it?'
+    Two: 'Yes. It's absolutely beautiful today.'
+One: 'I wish it was like this more frequently.'
+Two: 'Me too.'
+One: 'So where are you going now?'
+Two: 'I'm going to meet a friend of mine at the department store.'
+One: 'Going to do a little shopping?'
+Two: 'Yeah, I have to buy some presents for my parents.'
+One: 'What's the occasion?'
+    Two: 'It's their anniversary.'
+One: 'That's great. Well, you better get going. You don't want to be late.'
+Two: 'I'll see you next time.'
+One: 'Sure. Bye.'`;
+console.log('Текст до преобразования:\n\n' + text);
+regexp = /'/g; // замена всех одиарных кавычек на двойные
+console.log('Текст после преобразования 1:\n\n' + text.replace(regexp, '"'));
+regexp2 = /\B'/g; // замена всех одинарных ковычек кроме апострофов в словах
+console.log('Текст после преобразования 2:\n\n' + text.replace(regexp2, '"'));
+
+document.querySelector('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    let form = this;
+    if (!validateName(this.elements.name.value)){
+        this.elements.name.style.borderColor = 'red';
+        this.elements.name.parentNode.insertAdjacentHTML('beforeend','<p>Введите имя длинной от 3 до 9 символов!</p>');
+    } else {
+        this.elements.name.style = '';
+    }
+    if (!validatePhone(this.elements.tel.value)){
+        this.elements.tel.style.borderColor = 'red';
+        this.elements.tel.parentNode.insertAdjacentHTML('beforeend','<p>Введите телефон формата +7(000)000-0000!</p>');
+    } else {
+        this.elements.tel.style = '';
+    }
+    if (!validateEmail(this.elements.email.value)){
+        this.elements.email.style.borderColor = 'red';
+        this.elements.email.parentNode.insertAdjacentHTML('beforeend','<p>Проверьте корректность введенного email!</p>');
+    } else {
+        this.elements.email.style = '';
+    }
+    setTimeout(function(){
+        form.querySelectorAll('.input-container').forEach(el => {
+            if(el.querySelector('p')){
+                el.removeChild(el.querySelector('p'));
+            }
+        });
+    },3000);
+    if(validateName(this.elements.name.value)&&validatePhone(this.elements.tel.value)&&validateEmail(this.elements.email.value)){
+        this.submit();
+    }
+});
+
+function validateName(name) {
+    return /[a-zA-Zа-яА-Я]{3,9}/.test(name);
+}
+function validatePhone(phone) {
+    return /\+7\([\d]{3}\)[\d]{3}-[\d]{4}/.test(phone);
+}
+function validateEmail(email) {
+    return /[a-z0-9\-\.]@[a-z]+\.[ru|com]/.test(email);
+}
+</script>
+</body>
+</html>
