@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamburger</title>
+</head>
+<body>
+    <form>
+        <fieldset>
+            <legend>Размер гамбургера</legend>
+            <label>
+                <input checked type="radio" name="size" value="small">
+                Маленький
+            </label>
+            <label>
+                <input type="radio" name="size" value="big">
+                Большой
+            </label>
+        </fieldset>
+        <br>
+        <fieldset>
+            <legend>Вид начинки гамбургера</legend>
+            <label>
+                <input checked type="radio" name="stuffing" value="chees">
+                С сыром
+            </label>
+            <label>
+                <input type="radio" name="stuffing" value="salad">
+                С салатом
+            </label>
+            <label>
+                <input type="radio" name="stuffing" value="potato">
+                С картофелем
+            </label>
+        </fieldset>
+        <br>
+        <fieldset>
+            <legend>Вид добавки гамбургера</legend>
+            <label>
+                <input type="checkbox" name="spices">
+                Приправа
+            </label>
+            <label>
+                <input type="checkbox" name="mayo">
+                Майонез
+            </label>
+        </fieldset>
+        <br>
+        <button>Рассчитать стоимость и калорийность гамбургера</button>
+    </form>
+    <br>
+    <div class="info"></div>
+</body>
+
+<script>
+'use strict';   
+document.querySelector('form').addEventListener('submit', function(e){
+    e.preventDefault();
+    let size = document.querySelector('[name="size"]:checked'),
+        stuffing = document.querySelector('[name="stuffing"]:checked'),
+        spices = document.querySelector('[name="spices"]'),
+        mayo = document.querySelector('[name="mayo"]'),
+        hamburger = new Hamburger(size.value, stuffing.value);
+        if (spices.checked){
+            hamburger.addTopping('spices');
+        }
+        if (mayo.checked){
+            hamburger.addTopping('mayo');
+        }
+        document.querySelector('.info').innerHTML = hamburger.getOrderInfo();
+})
+class Hamburger{
+    constructor(size='small', stuffing='chees'){
+        this.size = size;
+        this.stuffing = stuffing;
+        this.topping = [];
+        this.getParams();
+    }
+    getParams(){
+        this.param = [
+            {
+                'small':[50, 20],
+                'big':[100, 40]
+            }
+            ,
+            {
+                'chees':[10, 20],
+                'salad':[20, 5],
+                'potato':[15, 10]
+            }
+            ,
+            {
+                'mayo':[20, 5],
+                'spices':[15, 0]
+            }
+        ];
+    }
+    getSize(){
+        return this.size == 'small' ? `маленький гамбургер` : `большой гамбургер`;
+    }
+    getStuffing() {
+        switch (this.stuffing){
+            case 'potato':
+                return 'с картофелем';
+            case 'salad':
+                return 'с салатом';
+            default:
+                return 'с сыром';
+        }
+    }
+    getTopping(){
+        if (this.topping.length>0){
+            return 'добавить ' + this.topping.map(topping => topping == 'mayo' ? 'майонез' : 'приправу').join(' и ');
+        } else {
+            return 'без добавок';
+        }
+    }
+    addTopping(topping) {
+        this.topping.push(topping);
+    }
+    calculate() {
+        let price = 0,
+            callories = 0,
+            [size, stuffing, toppings] = this.param,
+            [sizePrice, sizeCallories] = size[this.size],
+            [stuffingPrice, stuffingCallories] = stuffing[this.stuffing];
+            if (this.topping.length>0){
+                this.topping.forEach(topping => {
+                    let [toppingPrice, toppingCallories] = toppings[topping];
+                    price += toppingPrice;
+                    callories += toppingCallories;
+                });
+            }
+            
+        return `<strong>Стоимость:</strong> ${price + sizePrice + stuffingPrice}$.<br><strong>Калорийность:</strong> ${callories + sizeCallories + stuffingCallories}kkal`;
+    }
+    getOrderInfo(){
+        return `<strong>Ваш заказ:</strong> ${this.getSize()} ${this.getStuffing()}, ${this.getTopping()}<br>${this.calculate()}`;
+    }
+}
+</script>
+</html>
