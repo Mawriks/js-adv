@@ -30,7 +30,8 @@ Vue.component('cart', {
             }else{
                 Vue.set(product, 'quantity', 1);
                 Vue.set(product, 'total', product.price);
-                this.$parent.postJson(`/api/cart`, product)
+                console.log(product);
+                this.$parent.postJson(`/api/cart/${product.id_product}`, product)
                 .then(data=>{
                     if(data.result === 1){
                         this.cart.push(product);

@@ -1,4 +1,4 @@
-let add = (log, req) => {
+let add = (log, data) => {
     log.push(data);
     return JSON.stringify(log, null, 4);
 };

@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
         }
     })
 });
-router.post('/', (req, res) => {
+router.post('/:id', (req, res) => {
     handler(req, res, 'add', 'server/db/userCart.json');
     handlerLog(req, res, 'добавлено', 'server/db/stats.json');
 });

@@ -7,17 +7,29 @@ let handlerLog = (req, res, action, file) => {
         if(err){
             res.sendStatus(404, JSON.stringify({result:0, text: err}));
         } else {
-            console.log(req, res);
             let time = new Date();
-            let prd = log.body.name;
-            let log = logger.add(JSON.parse(data), {action, time, });
-            fs.writeFile(file, log, (err) => {
+            let id = +req.params.id;
+            let prdName = '';
+
+            fs.readFile('server/db/products.json', 'utf-8', (err, products)=> {
                 if(err){
-                    console.log('Error');
+                   console.log('Cant connect to db products');
                 } else {
-                    console.log('Success');
+                    JSON.parse(products).forEach(product => {
+                        if (product.id_product == id){
+                            prdName = product.product_name;
+                        }
+                    });
+                    let log = logger.add(JSON.parse(data), {action, time, prdName});
+                    fs.writeFile(file, log, (err) => {
+                        if(err){
+                            console.log('Error');
+                        } else {
+                            console.log('Success');
+                        }
+                    })
                 }
-            })
+            });
         }
     })
 };
